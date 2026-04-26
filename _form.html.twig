@@ -1,0 +1,504 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+<div class="row g-4">
+
+    <!-- Immatriculation -->
+    <div class="col-md-6">
+        <div class="form-floating">
+            {{ form_widget(form.immatriculation, {
+                'attr': {
+                    'class': 'form-control' ~ (form.immatriculation.vars.valid ? '' : ' is-invalid'),
+                    'placeholder': 'AA-123-BB',
+                    'autofocus': 'autofocus'
+                }
+            }) }}
+            {{ form_label(form.immatriculation, null, {
+                'label_attr': {'class': 'form-label fw-semibold'}
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.immatriculation) }}
+            </div>
+            <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>
+                Format : lettres, chiffres, tirets (ex: AB-123-CD)
+            </div>
+        </div>
+    </div>
+
+    <!-- Modèle -->
+    <div class="col-md-6">
+        <div class="form-floating">
+            {{ form_widget(form.modele, {
+                'attr': {
+                    'class': 'form-control' ~ (form.modele.vars.valid ? '' : ' is-invalid'),
+                    'placeholder': 'Peugeot 308, Renault Clio...'
+                }
+            }) }}
+            {{ form_label(form.modele, null, {
+                'label_attr': {'class': 'form-label fw-semibold'}
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.modele) }}
+            </div>
+            <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>
+                Modèle complet du véhicule
+            </div>
+        </div>
+    </div>
+
+    <!-- État - VERSION CORRIGÉE AVEC FORM-FLOATING -->
+    <div class="col-md-6">
+        <div class="form-floating">
+            {{ form_widget(form.etat, {
+                'attr': {
+                    'class': 'form-select' ~ (form.etat.vars.valid ? '' : ' is-invalid'),
+                    'data-choices': 'true'
+                }
+            }) }}
+            {{ form_label(form.etat, null, {
+                'label_attr': {'class': 'form-label fw-semibold'}
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.etat) }}
+            </div>
+            <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>
+                Statut actuel du véhicule
+            </div>
+        </div>
+    </div>
+
+    <!-- Kilométrage -->
+    <div class="col-md-6">
+        <div class="form-floating">
+            {{ form_widget(form.kilometrage, {
+                'attr': {
+                    'class': 'form-control' ~ (form.kilometrage.vars.valid ? '' : ' is-invalid'),
+                    'placeholder': '0',
+                    'min': '0',
+                    'step': '1'
+                }
+            }) }}
+            {{ form_label(form.kilometrage, null, {
+                'label_attr': {'class': 'form-label fw-semibold'}
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.kilometrage) }}
+            </div>
+            <div class="form-text">
+                <i class="bi bi-info-circle me-1"></i>
+                Kilométrage actuel en kilomètres
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Section des états avec badges - VERSION COMPLÈTE AVEC 6 ÉTATS -->
+<div class="mt-4 mb-4">
+    <div class="card border-0 bg-light-subtle shadow-sm">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-info-circle-fill text-danger fs-5 me-2"></i>
+                <h6 class="fw-semibold mb-0 text-danger">Signification des états</h6>
+            </div>
+            
+            <div class="row g-3">
+                <!-- Disponible -->
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px; min-width: 40px;">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div>
+                            <div class="fw-semibold text-success">Disponible</div>
+                            <div class="small text-muted">Prêt à l'utilisation</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- En panne -->
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px; min-width: 40px;">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+                        <div>
+                            <div class="fw-semibold text-danger">En panne</div>
+                            <div class="small text-muted">Nécessite réparation</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- En service -->
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px; min-width: 40px;">
+                            <i class="bi bi-tools"></i>
+                        </div>
+                        <div>
+                            <div class="fw-semibold text-warning">En service</div>
+                            <div class="small text-muted">En maintenance</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Affecté -->
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px; min-width: 40px;">
+                            <i class="bi bi-person-check"></i>
+                        </div>
+                        <div>
+                            <div class="fw-semibold text-info">Affecté</div>
+                            <div class="small text-muted">Attribué à un employé</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- En révision (NOUVEAU) -->
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-orange bg-opacity-10 text-orange-emphasis rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px; min-width: 40px;">
+                            <i class="bi bi-clipboard-check"></i>
+                        </div>
+                        <div>
+                            <div class="fw-semibold text-orange-emphasis">En révision</div>
+                            <div class="small text-muted">En inspection technique</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hors service (NOUVEAU) -->
+                <div class="col-12 col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-dark bg-opacity-10 text-dark rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 40px; height: 40px; min-width: 40px;">
+                            <i class="bi bi-slash-circle"></i>
+                        </div>
+                        <div>
+                            <div class="fw-semibold text-dark">Hors service</div>
+                            <div class="small text-muted">Désactivé temporairement</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Légende -->
+            <div class="mt-3 pt-3 border-top">
+                <div class="small text-muted">
+                    <i class="bi bi-lightbulb text-warning me-1"></i>
+                    Choisissez l'état approprié pour assurer un suivi précis du véhicule.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="my-4">
+
+<!-- Boutons d'action -->
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <a href="{{ path('app_vehicle_index') }}" 
+           class="btn btn-outline-secondary d-flex align-items-center gap-2">
+            <i class="bi bi-arrow-left"></i>
+            <span>Retour à la liste</span>
+        </a>
+    </div>
+    
+    <div class="d-flex gap-3">
+        <button type="reset" 
+                class="btn btn-outline-danger d-flex align-items-center gap-2"
+                id="resetBtn">
+            <i class="bi bi-arrow-clockwise"></i>
+            <span>Réinitialiser</span>
+        </button>
+        
+        <button type="submit" 
+                class="btn btn-danger d-flex align-items-center gap-2 px-4"
+                id="submitBtn">
+            <i class="bi bi-{{ button_icon|default('save') }}"></i>
+            <span>{{ button_label|default('Enregistrer le véhicule') }}</span>
+        </button>
+    </div>
+</div>
+
+{{ form_end(form) }}
+
+<!-- Scripts pour améliorer l'UX -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Validation Bootstrap
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Effet de focus sur les champs
+        const inputs = document.querySelectorAll('.form-control, .form-select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+
+        // Confirmation avant réinitialisation
+        document.getElementById('resetBtn').addEventListener('click', function(e) {
+            if (!confirm('Êtes-vous sûr de vouloir réinitialiser le formulaire ? Toutes les modifications seront perdues.')) {
+                e.preventDefault();
+            }
+        });
+
+        // Animation sur soumission
+        const submitBtn = document.getElementById('submitBtn');
+        const form = document.querySelector('form');
+        
+        if (form && submitBtn) {
+            form.addEventListener('submit', function() {
+                submitBtn.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Enregistrement en cours...
+                `;
+                submitBtn.disabled = true;
+            });
+        }
+
+        // Masquer les messages d'erreur au focus
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.classList.remove('is-invalid');
+                const feedback = this.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.style.display = 'none';
+                }
+            });
+        });
+        
+        // Amélioration du sélecteur d'état (mise à jour pour inclure orange)
+        const etatSelect = document.querySelector('#{{ form.etat.vars.id }}');
+        if (etatSelect) {
+            etatSelect.addEventListener('change', function() {
+                // Ajouter une classe selon la valeur sélectionnée
+                this.classList.remove('border-success', 'border-danger', 'border-warning', 'border-info', 'border-orange', 'border-dark');
+                
+                if (this.value === 'Disponible') {
+                    this.classList.add('border-success');
+                } else if (this.value === 'En panne') {
+                    this.classList.add('border-danger');
+                } else if (this.value === 'En service') {
+                    this.classList.add('border-warning');
+                } else if (this.value === 'Affecté') {
+                    this.classList.add('border-info');
+                } else if (this.value === 'En révision') {
+                    this.classList.add('border-orange');
+                } else if (this.value === 'Hors service') {
+                    this.classList.add('border-dark');
+                }
+            });
+            
+            // Déclencher l'événement au chargement
+            etatSelect.dispatchEvent(new Event('change'));
+            
+            // Ajouter un placeholder vide comme première option
+            if (!etatSelect.querySelector('option[value=""]')) {
+                const emptyOption = document.createElement('option');
+                emptyOption.value = '';
+                emptyOption.textContent = 'Sélectionnez un état';
+                emptyOption.disabled = true;
+                emptyOption.selected = true;
+                etatSelect.insertBefore(emptyOption, etatSelect.firstChild);
+            }
+        }
+    });
+</script>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 2px solid #e5e7eb;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.25);
+        outline: none;
+    }
+    
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+    
+    .form-control.is-invalid:focus, .form-select.is-invalid:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }
+    
+    .form-floating > label {
+        color: #6c757d;
+        padding: 1rem 0.75rem;
+    }
+    
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label,
+    .form-floating > .form-select ~ label {
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        color: #dc2626;
+        font-weight: 500;
+    }
+    
+    /* Style spécial pour le select flottant */
+    .form-floating > .form-select {
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+    
+    .form-floating > .form-select ~ label {
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    }
+    
+    .invalid-feedback {
+        display: block;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    
+    .form-text {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        color: #6c757d;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn {
+        border-radius: 8px;
+        padding: 0.625rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-danger {
+        background-color: #dc2626;
+        border-color: #dc2626;
+    }
+    
+    .btn-danger:hover {
+        background-color: #b91c1c;
+        border-color: #b91c1c;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    }
+    
+    .btn-outline-danger:hover {
+        background-color: rgba(220, 38, 38, 0.1);
+        color: #dc2626;
+    }
+    
+    .form-floating.focused label {
+        color: #dc2626;
+    }
+    
+    .card {
+        border-radius: 12px;
+    }
+    
+    hr {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+    }
+    
+    /* Styles pour la section des états */
+    .alert-light {
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+    }
+    
+    .badge {
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    
+    .rounded-2 {
+        border-radius: 8px;
+    }
+    
+    .rounded-3 {
+        border-radius: 12px;
+    }
+    
+    /* Styles pour le sélecteur d'état avec bordure colorée */
+    .form-select.border-success {
+        border-color: #198754 !important;
+    }
+    
+    .form-select.border-danger {
+        border-color: #dc3545 !important;
+    }
+    
+    .form-select.border-warning {
+        border-color: #ffc107 !important;
+    }
+    
+    .form-select.border-info {
+        border-color: #0dcaf0 !important;
+    }
+    
+    .form-select.border-orange {
+        border-color: #fd7e14 !important;
+    }
+    
+    .form-select.border-dark {
+        border-color: #212529 !important;
+    }
+    
+    /* Styles pour les couleurs orange personnalisées */
+    .bg-orange {
+        background-color: rgba(253, 126, 20, 0.1) !important;
+    }
+    
+    .text-orange-emphasis {
+        color: #a16207 !important;
+    }
+    
+    .border-orange {
+        border-color: #fd7e14 !important;
+    }
+    
+    /* Amélioration du dropdown */
+    .form-select option {
+        padding: 0.5rem;
+    }
+    
+    .form-select:focus option:checked {
+        background-color: #dc2626;
+        color: white;
+    }
+</style>

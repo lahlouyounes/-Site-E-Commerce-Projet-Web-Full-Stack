@@ -1,0 +1,464 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Véhicules - ParcAuto{% endblock %}
+
+{% block page_icon 'truck' %}
+
+{% block page_title %}Gestion des Véhicules{% endblock %}
+
+{% block page_description %}
+    Consultez et gérez l'ensemble du parc automobile
+{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ path('app_vehicle_new') }}" 
+       class="btn btn-danger d-flex align-items-center gap-2">
+        <i class="bi bi-plus-circle"></i>
+        <span>Nouveau véhicule</span>
+    </a>
+{% endblock %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 bg-danger bg-opacity-5">
+            <div class="card-body p-3">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <h6 class="mb-1 text-danger fw-semibold">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Statistiques du parc
+                        </h6>
+                        <div class="d-flex flex-wrap gap-4">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-1">
+                                    <i class="bi bi-car-front me-1"></i>
+                                    {{ vehicles|length }} véhicule(s)
+                                </span>
+                            </div>
+                            {% set disponibles = vehicles|filter(v => v.etat == 'Disponible')|length %}
+                            {% set enPanne = vehicles|filter(v => v.etat == 'En panne')|length %}
+                            {% set affectes = vehicles|filter(v => v.etat == 'Affecté')|length %}
+                            {% set enService = vehicles|filter(v => v.etat == 'En service')|length %}
+                            {% set enRevision = vehicles|filter(v => v.etat == 'En révision')|length %}
+                            {% set horsService = vehicles|filter(v => v.etat == 'Hors service')|length %}
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-success bg-opacity-20 text-success fw-semibold rounded-pill px-3 py-1">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    {{ disponibles }} disponible(s)
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-danger bg-opacity-20 text-danger fw-semibold rounded-pill px-3 py-1">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    {{ enPanne }} en panne
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-warning bg-opacity-20 text-warning fw-semibold rounded-pill px-3 py-1">
+                                    <i class="bi bi-tools me-1"></i>
+                                    {{ enService }} en service
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-info bg-opacity-20 text-info fw-semibold rounded-pill px-3 py-1">
+                                    <i class="bi bi-person-check me-1"></i>
+                                    {{ affectes }} affecté(s)
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-orange bg-opacity-20 text-orange-emphasis fw-semibold rounded-pill px-3 py-1">
+                                    <i class="bi bi-clipboard-check me-1"></i>
+                                    {{ enRevision }} en révision
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-dark bg-opacity-20 text-dark fw-semibold rounded-pill px-3 py-1">
+                                    <i class="bi bi-slash-circle me-1"></i>
+                                    {{ horsService }} hors service
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-uppercase small">
+                    <tr>
+                        <th class="ps-4 py-3 fw-semibold text-muted border-0">ID</th>
+                        <th class="py-3 fw-semibold text-muted border-0">Immatriculation</th>
+                        <th class="py-3 fw-semibold text-muted border-0">Modèle</th>
+                        <th class="py-3 fw-semibold text-muted border-0">État</th>
+                        <th class="py-3 fw-semibold text-muted border-0">Kilométrage</th>
+                        <th class="py-3 fw-semibold text-muted border-0 text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                {% for vehicle in vehicles %}
+                    {# Définir les configurations pour chaque état possible #}
+                    {% set etatConfig = {
+                        'Disponible': { 
+                            color: 'success', 
+                            icon: 'bi-check-circle-fill',
+                            bg_opacity: '20',
+                            text_class: 'text-success-emphasis'
+                        },
+                        'En panne': { 
+                            color: 'danger', 
+                            icon: 'bi-exclamation-triangle-fill',
+                            bg_opacity: '20',
+                            text_class: 'text-danger-emphasis'
+                        },
+                        'En service': { 
+                            color: 'warning', 
+                            icon: 'bi-tools',
+                            bg_opacity: '20',
+                            text_class: 'text-warning-emphasis'
+                        },
+                        'Affecté': { 
+                            color: 'info', 
+                            icon: 'bi-person-check',
+                            bg_opacity: '20',
+                            text_class: 'text-info-emphasis'
+                        },
+                        'En révision': { 
+                            color: 'orange',
+                            icon: 'bi-clipboard-check',
+                            bg_opacity: '20',
+                            text_class: 'text-orange-emphasis'
+                        },
+                        'Hors service': { 
+                            color: 'dark', 
+                            icon: 'bi-slash-circle',
+                            bg_opacity: '20',
+                            text_class: 'text-dark-emphasis'
+                        }
+                    } %}
+                    
+                    {# Vérifier d'abord avec la clé exacte #}
+                    {% if vehicle.etat in etatConfig|keys %}
+                        {% set config = etatConfig[vehicle.etat] %}
+                    {# Si non trouvé, essayer avec différentes variantes #}
+                    {% elseif 'panne' in vehicle.etat|lower %}
+                        {% set config = etatConfig['En panne'] %}
+                    {% elseif 'disponible' in vehicle.etat|lower %}
+                        {% set config = etatConfig['Disponible'] %}
+                    {% elseif 'service' in vehicle.etat|lower %}
+                        {% set config = etatConfig['En service'] %}
+                    {% elseif 'affect' in vehicle.etat|lower %}
+                        {% set config = etatConfig['Affecté'] %}
+                    {% elseif 'révision' in vehicle.etat|lower or 'revision' in vehicle.etat|lower %}
+                        {% set config = etatConfig['En révision'] %}
+                    {% elseif 'hors' in vehicle.etat|lower %}
+                        {% set config = etatConfig['Hors service'] %}
+                    {% else %}
+                        {% set config = { 
+                            color: 'secondary', 
+                            icon: 'bi-question-circle',
+                            bg_opacity: '10',
+                            text_class: 'text-secondary-emphasis'
+                        } %}
+                    {% endif %}
+                    
+                    <tr class="border-bottom">
+                        <td class="ps-4 py-3">
+                            <div class="fw-semibold text-dark">#{{ vehicle.id }}</div>
+                        </td>
+
+                        <td class="py-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-{{ config.color }} bg-opacity-{{ config.bg_opacity }} {{ config.text_class }} rounded-circle d-flex align-items-center justify-content-center"
+                                     style="width: 32px; height: 32px;">
+                                    <i class="bi bi-car-front"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">{{ vehicle.immatriculation }}</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="py-3">
+                            <div class="fw-medium text-dark">{{ vehicle.modele }}</div>
+                            <div class="small text-muted">
+                                ID: {{ vehicle.id }}
+                            </div>
+                        </td>
+
+                        <td class="py-3">
+                            <span class="badge bg-{{ config.color }} bg-opacity-{{ config.bg_opacity }} {{ config.text_class }} border border-{{ config.color }} border-opacity-50 rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1 fw-semibold">
+                                <i class="bi {{ config.icon }} fs-6"></i>
+                                {{ vehicle.etat }}
+                            </span>
+                        </td>
+
+                        <td class="py-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-speedometer2 text-muted"></i>
+                                <span class="fw-semibold">{{ vehicle.kilometrage | number_format(0, ',', ' ') }} km</span>
+                            </div>
+                        </td>
+
+                        <td class="text-end pe-4 py-3">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{{ path('app_vehicle_show', {'id': vehicle.id}) }}"
+                                   class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                                   data-bs-toggle="tooltip"
+                                   title="Voir les détails">
+                                    <i class="bi bi-eye"></i>
+                                    <span class="d-none d-md-inline">Détails</span>
+                                </a>
+
+                                <a href="{{ path('app_vehicle_edit', {'id': vehicle.id}) }}"
+                                   class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                                   data-bs-toggle="tooltip"
+                                   title="Modifier le véhicule">
+                                    <i class="bi bi-pencil"></i>
+                                    <span class="d-none d-md-inline">Modifier</span>
+                                </a>
+
+                                <div class="dropdown">
+                                    <button type="button"
+                                            class="btn btn-outline-dark btn-sm d-flex align-items-center gap-1"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2"
+                                                   href="{{ path('app_entretien_new') }}">
+                                                    <i class="bi bi-tools text-warning"></i>
+                                                    Ajouter un entretien
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center gap-2"
+                                                   href="{{ path('app_affectation_new') }}">
+                                                    <i class="bi bi-person-plus text-info"></i>
+                                                    Affecter à un employé
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                        {% endif %}
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2 text-danger"
+                                               href="#"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#deleteModal{{ vehicle.id }}">
+                                                <i class="bi bi-trash"></i>
+                                                Supprimer
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Modal de suppression -->
+                    <div class="modal fade" id="deleteModal{{ vehicle.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title text-danger">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        Confirmer la suppression
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Êtes-vous sûr de vouloir supprimer le véhicule <strong>{{ vehicle.immatriculation }}</strong> ({{ vehicle.modele }}) ?</p>
+                                    <div class="alert alert-warning small mb-0">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Cette action est irréversible. Toutes les données associées (entretiens, affectations) seront également supprimées.
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                        Annuler
+                                    </button>
+                                    <form method="post" action="{{ path('app_vehicle_delete', {'id': vehicle.id}) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ vehicle.id) }}">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-trash me-1"></i>
+                                            Supprimer définitivement
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <div class="py-5">
+                                <div class="text-muted mb-3">
+                                    <i class="bi bi-car-front display-6"></i>
+                                </div>
+                                <h4 class="text-muted mb-2">Aucun véhicule trouvé</h4>
+                                <p class="text-muted mb-4">Commencez par ajouter votre premier véhicule au parc</p>
+                                <a href="{{ path('app_vehicle_new') }}" class="btn btn-danger">
+                                    <i class="bi bi-plus-circle me-1"></i>
+                                    Ajouter un véhicule
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    {% if vehicles|length > 0 %}
+    <div class="card-footer bg-white border-0 border-top pt-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div class="text-muted small">
+                <i class="bi bi-info-circle me-1"></i>
+                Affichage de {{ vehicles|length }} véhicule(s)
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Script pour les tooltips -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Activer les tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Activer les dropdowns
+        var dropdownTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+        var dropdownList = dropdownTriggerList.map(function (dropdownTriggerEl) {
+            return new bootstrap.Dropdown(dropdownTriggerEl);
+        });
+    });
+</script>
+
+<style>
+    .table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+    
+    .table tbody tr:hover {
+        background-color: rgba(220, 38, 38, 0.03);
+    }
+    
+    .badge {
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        font-size: 0.85em;
+    }
+    
+    .dropdown-menu {
+        border-radius: 8px;
+        border: 1px solid rgba(0,0,0,.1);
+        min-width: 200px;
+    }
+    
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    /* Couleurs plus contrastées pour les badges d'état */
+    .badge.bg-success {
+        background-color: rgba(25, 135, 84, 0.15) !important;
+        color: #0a3622 !important;
+        border-color: #198754 !important;
+    }
+    
+    .badge.bg-danger {
+        background-color: rgba(220, 53, 69, 0.15) !important;
+        color: #58151c !important;
+        border-color: #dc3545 !important;
+    }
+    
+    .badge.bg-primary {
+        background-color: rgba(13, 110, 253, 0.15) !important;
+        color: #052c65 !important;
+        border-color: #0d6efd !important;
+    }
+    
+    .badge.bg-info {
+        background-color: rgba(13, 202, 240, 0.15) !important;
+        color: #055160 !important;
+        border-color: #0dcaf0 !important;
+    }
+    
+    .badge.bg-warning {
+        background-color: rgba(255, 193, 7, 0.15) !important;
+        color: #664d03 !important;
+        border-color: #ffc107 !important;
+    }
+    
+    .badge.bg-dark {
+        background-color: rgba(33, 37, 41, 0.15) !important;
+        color: #212529 !important;
+        border-color: #212529 !important;
+    }
+    
+    .badge.bg-secondary {
+        background-color: rgba(108, 117, 125, 0.15) !important;
+        color: #495057 !important;
+        border-color: #6c757d !important;
+    }
+    
+    /* Couleurs ORANGE personnalisées pour "En révision" */
+    .badge.bg-orange {
+        background-color: rgba(253, 126, 20, 0.15) !important;
+        color: #a16207 !important;
+        border-color: #fd7e14 !important;
+    }
+    
+    .text-orange-emphasis {
+        color: #a16207 !important;
+    }
+    
+    .border-orange {
+        border-color: #fd7e14 !important;
+    }
+    
+    /* Couleurs pour les icônes d'immatriculation */
+    .bg-success {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+    }
+    
+    .bg-danger {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+    }
+    
+    .bg-primary {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+    }
+    
+    .bg-info {
+        background-color: rgba(13, 202, 240, 0.1) !important;
+    }
+    
+    .bg-warning {
+        background-color: rgba(255, 193, 7, 0.1) !important;
+    }
+    
+    .bg-orange {
+        background-color: rgba(253, 126, 20, 0.1) !important;
+    }
+    
+    .bg-dark {
+        background-color: rgba(33, 37, 41, 0.1) !important;
+    }
+</style>
+{% endblock %}

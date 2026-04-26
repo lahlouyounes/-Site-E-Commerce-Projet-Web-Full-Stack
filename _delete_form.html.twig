@@ -1,0 +1,197 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Supprimer le véhicule - ParcAuto{% endblock %}
+
+{% block page_icon 'trash' %}
+
+{% block page_title %}Supprimer le véhicule{% endblock %}
+
+{% block page_description %}
+    Confirmation de suppression du véhicule {{ vehicle.immatriculation }}
+{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ path('app_vehicle_index') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+        <i class="bi bi-arrow-left"></i>
+        <span>Retour à la liste</span>
+    </a>
+{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card border-0 shadow-lg border-start border-4 border-danger">
+            <div class="card-body p-4 p-lg-5">
+                <!-- En-tête d'avertissement -->
+                <div class="text-center mb-4">
+                    <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width: 80px; height: 80px;">
+                        <i class="bi bi-exclamation-triangle-fill fs-1"></i>
+                    </div>
+                    <h3 class="text-danger fw-bold mb-2">Confirmation de suppression</h3>
+                    <p class="text-muted">Cette action est irréversible. Veuillez confirmer votre choix.</p>
+                </div>
+
+                <!-- Détails du véhicule -->
+                <div class="card border mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width: 50px; height: 50px;">
+                                <i class="bi bi-car-front fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0">{{ vehicle.immatriculation }}</h5>
+                                <p class="text-muted mb-0">{{ vehicle.modele }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row small">
+                            <div class="col-6">
+                                <div class="text-muted">ID</div>
+                                <div class="fw-semibold">#{{ vehicle.id }}</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-muted">État</div>
+                                <div>
+                                    {% if vehicle.etat == 'Disponible' %}
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">
+                                            Disponible
+                                        </span>
+                                    {% elseif vehicle.etat == 'En panne' %}
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3">
+                                            En panne
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3">
+                                            {{ vehicle.etat }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avertissements -->
+                <div class="alert alert-danger border-danger border-start border-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <i class="bi bi-exclamation-octagon-fill fs-5 text-danger"></i>
+                        <div>
+                            <h6 class="alert-heading mb-2">Attention !</h6>
+                            <ul class="mb-0 ps-3">
+                                <li>Cette action ne peut pas être annulée</li>
+                                <li>Toutes les données du véhicule seront définitivement supprimées</li>
+                                <li>Les entretiens associés seront également supprimés</li>
+                                <li>Les affectations en cours seront annulées</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire de confirmation -->
+                <form method="post" action="{{ path('app_vehicle_delete', {'id': vehicle.id}) }}" id="deleteForm">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ vehicle.id) }}">
+                    
+                    <div class="mb-4">
+                        <label for="confirmation" class="form-label fw-semibold">
+                            <i class="bi bi-shield-check me-1"></i>
+                            Tapez "SUPPRIMER" pour confirmer
+                        </label>
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               id="confirmation" 
+                               placeholder="Saisissez SUPPRIMER"
+                               required
+                               data-confirm-text="SUPPRIMER">
+                        <div class="form-text text-danger">
+                            Cette mesure de sécurité empêche les suppressions accidentelles
+                        </div>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="d-grid gap-3">
+                        <button type="submit" 
+                                class="btn btn-danger btn-lg d-flex align-items-center justify-content-center gap-2"
+                                id="submitBtn"
+                                disabled>
+                            <i class="bi bi-trash"></i>
+                            <span>Supprimer définitivement</span>
+                        </button>
+                        
+                        <a href="{{ path('app_vehicle_show', {'id': vehicle.id}) }}" 
+                           class="btn btn-outline-secondary btn-lg d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Annuler et retourner aux détails</span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Informations complémentaires -->
+        <div class="text-center mt-4">
+            <p class="text-muted small">
+                <i class="bi bi-info-circle me-1"></i>
+                Si vous ne souhaitez pas supprimer ce véhicule, vous pouvez simplement le marquer comme "Hors service"
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Script de confirmation -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmationInput = document.getElementById('confirmation');
+        const submitBtn = document.getElementById('submitBtn');
+        const requiredText = confirmationInput.dataset.confirmText;
+        
+        confirmationInput.addEventListener('input', function() {
+            if (this.value.toUpperCase() === requiredText) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-danger', 'opacity-50');
+                submitBtn.classList.add('btn-danger');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50');
+            }
+        });
+        
+        // Empêcher la soumission avec la touche Entrée
+        confirmationInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+        
+        // Confirmation supplémentaire au submit
+        document.getElementById('deleteForm').addEventListener('submit', function(e) {
+            if (!confirm('Êtes-vous ABSOLUMENT certain de vouloir supprimer ce véhicule ?\n\nCette action est définitive et toutes les données associées seront perdues.')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+
+<style>
+    .card {
+        border-radius: 12px;
+    }
+    
+    #submitBtn:disabled {
+        background-color: #dc2626;
+        border-color: #dc2626;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .alert {
+        border-radius: 8px;
+    }
+    
+    .form-control:focus {
+        border-color: #dc2626;
+        box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.25);
+    }
+</style>
+{% endblock %}
